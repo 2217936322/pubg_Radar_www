@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>印度雷达</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="./css/ol.css">
+  <link rel="stylesheet" href="./css/bulma.min.css" />
+  <link rel="stylesheet" href="./app.css" />
+  <script src="./js/vue.js"></script>
+  <script src="./js/ol.js"></script>
+  <script src="./js/axios.min.js"></script>
+  <script src="./js/projection.js"></script>
+  <script src="./libs/socket.io.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <div class="sidenav" id="navBox" style="display:none;">
+      <section class="section">
+        <h4 class="title STYLE1">欢迎使用！</h4>
+        <label class="label">跟随目标:<input type="input" id="followID" v-model="followID"></label>
+        <br>
+        <label class="label">地图设置:</label>
+        <input type="checkbox" id="hideallitems" v-model="hideAllItems"><label for="hideAllItems"
+          style="color:black;">战斗模式</label>
+        <input type="checkbox" id="followme" v-model="followMe"><label for="followme" style="color:black;">视线跟随</label>
+        <input type="checkbox" id="followRot" v-model="followRot"><label for="followRot"
+          style="color:black;">角度跟随</label>
+        <br>
+        <input type="checkbox" id="showTeam" v-model="showTeam"><label for="showTeam" style="color:black;">显示队伍</label>
+        <br>
+        <label class="label">显示设置:</label>
+        <input type="checkbox" id="showbox" v-model="showBox"><label for="showbox" style="color:Orange;">盒子</label>
+        <input type="checkbox" id="showairdrop" v-model="showAirDrop"><label for="showairdrop"
+          style="color:red;">空投</label>
+        <input type="checkbox" id="showcar" v-model="showCar"><label for="showcar" style="color:Olive ;">载具</label>
+        <input type="checkbox" id="showFlare" v-model="showFlare"><label for="showFlare" style="color:red;">信号枪</label>
+        <br>
+
+        <label class="label">物资选择：</label>
+        <input type="checkbox" id="showBack" v-model="showBack"><label for="showBack" style="color:red;">背包</label>
+        <input type="checkbox" id="showArmor2" v-model="showArmor2"><label for="showArmor2"
+          style="color:Orange;">甲２</label>
+        <input type="checkbox" id="showArmor3" v-model="showArmor3"><label for="showBack3" style="color:red;">甲３</label>
+        <input type="checkbox" id="showHead2" v-model="showHead2"><label for="showHead2"
+          style="color:Orange;">头２</label>
+        <input type="checkbox" id="showHead3" v-model="showHead3"><label for="showBack3" style="color:red;">头３</label>
+        <br>
+
+        <input type="checkbox" id="showFirstAid" v-model="showFirstAid"><label for="showFirstAid"
+          style="color:Orange;">急救</label>
+        <input type="checkbox" id="showMedKit" v-model="showMedKit"><label for="showMedKit"
+          style="color:Orange;">医疗</label>
+        <input type="checkbox" id="showDrink" v-model="showDrink"><label for="showDrink"
+          style="color:Orange;">饮料,止疼药,肾上腺</label>
+        <br>
+
+        <input type="checkbox" id="showJerryCan" v-model="showJerryCan"><label for="showJerryCan"
+          style="color:Orange;">汽油</label>
+
+        <input type="checkbox" id="showGrenade" v-model="showGrenade"><label for="showGrenade"
+          style="color:SteelBlue ;">手雷</label>
+        <input type="checkbox" id="showSmokeBomb" v-model="showSmokeBomb"><label for="showSmokeBomb"
+          style="color:SteelBlue ;">烟雾</label>
+        <input type="checkbox" id="showAmmo556" v-model="showAmmo556"><label for="showAmmo556"
+          style="color:black;">5.56</label>
+        <input type="checkbox" id="showAmmo762" v-model="showAmmo762"><label for="showAmmo762"
+          style="color:black;">7.62</label>
+        <br>
+
+        <label class="label">配件选择：</label>
+        <input type="checkbox" id="showForeGrip" v-model="showForeGrip"><label for="showForeGrip"
+          style="color:black;">握把</label>
+        <input type="checkbox" id="showLowST" v-model="showLowST"><label for="showLowST"
+          style="color:black;">基础镜</label>
+        <input type="checkbox" id="showHighST" v-model="showHighST"><label for="showHighST"
+          style="color:red;">高倍镜</label>
+        <input type="checkbox" id="showPan" v-model="showPan"><label for="showPan" style="color:Teal;">平底锅</label>
+        <br>
+        <input type="checkbox" id="showARCnFH" v-model="showARCnFH"><label for="showARCnFH"
+          style="color:black;">步枪口</label>
+        <input type="checkbox" id="showARSuppressor" v-model="showARSuppressor"><label for="showARSuppressor"
+          style="color:red;">步消音</label>
+        <input type="checkbox" id="showARExtended" v-model="showARExtended"><label for="showARExtended"
+          style="color:Teal;">步扩容</label>
+        <input type="checkbox" id="showARStock" v-model="showARStock"><label for="showARStock"
+          style="color:black;">步枪托</label>
+        <br>
+        <input type="checkbox" id="showSRFlashHider" v-model="showSRFlashHider"><label for="showSRFlashHider"
+          style="color:black;">狙枪口</label>
+        <input type="checkbox" id="showSRSuppressor" v-model="showSRSuppressor"><label for="showSRSuppressor"
+          style="color:red;">狙消音</label>
+        <input type="checkbox" id="showSRExtended" v-model="showSRExtended"><label for="showSRExtended"
+          style="color:Teal;">狙扩容</label>
+        <input type="checkbox" id="showSRStock" v-model="showSRStock"><label for="showSRStock"
+          style="color:black;">狙枪托</label>
+        <br>
+
+        <label class="label">武器选择：</label>
+        556步枪：<br>
+        <input type="checkbox" id="showM16A4" v-model="showM16A4"><label for="showM16A4"
+          style="color:black;">M16A4</label>
+        <input type="checkbox" id="showSCAR" v-model="showSCAR"><label for="showSCAR" style="color:red;">SCAR</label>
+        <input type="checkbox" id="showM416" v-model="showM416"><label for="showM416" style="color:red;">M416</label>
+        <input type="checkbox" id="showQBZ" v-model="showQBZ"><label for="showQBZ" style="color:black;">QBZ95</label>
+        <br>
+        <input type="checkbox" id="showG36C" v-model="showG36C"><label for="showG36C" style="color:black;">G36C</label>
+        <input type="checkbox" id="showAUG" v-model="showAUG"><label for="showAUG" style="color:red;">AUG</label>
+        <br>
+        762步枪：<br>
+        <input type="checkbox" id="showAK47" v-model="showAK47"><label for="showAK47" style="color:red;">AK47</label>
+        <input type="checkbox" id="showM762" v-model="showM762"><label for="showM762" style="color:black;">M762</label>
+        <input type="checkbox" id="showGroza" v-model="showGroza"><label for="showGroza"
+          style="color:red;">Groza</label>
+        <br>
+        狙击枪：<br>
+        <input type="checkbox" id="showMini14" v-model="showMini14"><label for="showMini14"
+          style="color:Tomato ;">MINI14</label>
+        <input type="checkbox" id="showQbu88" v-model="showQbu88"><label for="showQbu88"
+          style="color:black ;">QBU88</label>
+        <input type="checkbox" id="showSKS" v-model="showSKS"><label for="showSKS" style="color:Tomato ;">SKS</label>
+        <input type="checkbox" id="showMk47" v-model="showMk47"><label for="showMk47" style="color:black ;">Mk47</label>
+        <input type="checkbox" id="showFnf" v-model="showFnf"><label for="showFnf" style="color:black ;">Fnf</label>
+        <br>
+        <input type="checkbox" id="showAwm" v-model="showAwm"><label for="showAwm" style="color:hotpink;">Awm</label>
+        <input type="checkbox" id="showM24" v-model="showM24"><label for="showM24" style="color:hotpink;">M24</label>
+        <input type="checkbox" id="showKar98k" v-model="showKar98k"><label for="showKar98k"
+          style="color:hotpink;">98K</label>
+        <br>
+        机枪：<br>
+        <input type="checkbox" id="showM249" v-model="showM249"><label for="showM249"
+          style="color:YellowGreen;">M249</label>
+        <input type="checkbox" id="showDP28" v-model="showDP28"><label for="showDP28"
+          style="color:YellowGreen;">DP28</label>
+        <br>
+        <label class="label" style="color:tomato;">刷新率:{{ nowFps }}</label>
+      </section>
+    </div>
+    <div id="map"></div>
+  </div>
+  <div class="menuBox" id="menuBox" style="background-color: rgba(206, 122, 122, 0.5);"></div>
+  <script src="svgImg.js"></script>
+  <script src="navjs.js"></script>
+  <script src="utils.js"></script>
+  <script src="radar.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>
